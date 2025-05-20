@@ -34,7 +34,10 @@ def main():  # console‑script entrypoint
 
     limit_td = parse_timedelta(args.limit)
 
-    if SERVICE_AVAILABLE and (args.install or args.remove or args.start or args.stop):
+    # ----- Gestión del servicio Windows -----------------------------------
+    if SERVICE_AVAILABLE and any(
+        (args.install, args.remove, args.start, args.stop)
+    ):
         if args.install:
             win32serviceutil.InstallService(
                 GameTimeService._svc_name_,  # type: ignore
@@ -48,4 +51,17 @@ def main():  # console‑script entrypoint
             win32serviceutil.RemoveService(GameTimeService._svc_name_)  # type: ignore
             print("Servicio eliminado.")
         elif args.start:
-            win32
+            win32serviceutil.StartService(GameTimeService._svc_name_)  # type: ignore
+            print("Servicio iniciado.")
+        elif args.stop:
+            win32serviceutil.StopService(GameTimeService._svc_name_)  # type: ignore
+            print("Servicio detenido.")
+        sys.exit(0)
+
+    # ----- Ejecución en primer plano --------------------------------------
+    monitor = Monitor(limit_td)
+    monitor.loop()
+
+
+if __name__ == "__main__":
+    main()
