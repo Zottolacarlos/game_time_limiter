@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import List
 import psutil
+import subprocess, platform
 
 IGNORE_NAMES = {
     "steamwebhelper.exe",
@@ -29,7 +30,18 @@ def kill_proc(proc: psutil.Process):
         proc.terminate()
         proc.wait(timeout=8)
     except (psutil.NoSuchProcess, psutil.TimeoutExpired, psutil.AccessDenied):
-        pass
+        # segundo intento más agresivo
+        try:
+            proc.kill()                 # señal SIGKILL / TerminateProcess
+            proc.wait(timeout=5)
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.TimeoutExpired):
+            # Windows – usa taskkill /F /T
+            if platform.system() == "Windows":
+                subprocess.run(
+                    ["taskkill", "/PID", str(proc.pid), "/F", "/T"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
 
 
 def kill_steam_and_games():

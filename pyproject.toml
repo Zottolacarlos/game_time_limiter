@@ -16,7 +16,7 @@ name = "game-time-limiter"              # nombre en PyPI (slug, sin espacios)
 version = "0.7.0"                       # sincronízalo con tu changelog
 description = "Limita el tiempo diario de juego en Steam (Windows)"
 readme = "README.md"                    # se muestra en PyPI
-authors = [ { name = "Tu Nombre", email = "tu@email" } ]
+authors = [{ name = "Carlos Zottola" }] 
 license = { text = "MIT" }              # o la que elijas
 requires-python = ">=3.10"
 
@@ -26,6 +26,8 @@ dependencies = [
     # win10toast solo es necesario en Windows; la marca de entorno evita que
     # pip lo intente instalar en Linux/macOS.
     "win10toast; sys_platform == 'win32'",
+    "pyside6",
+    "qdarkstyle",
 ]
 
 #####################################
